@@ -102,6 +102,70 @@ void LagrangianInterpolation(const double& Xa, const vector<double>& x, const ve
 	
 }
 
+/**
+ * @brief Функція, яка обчислює один базовий поліном Лагранжа для конкретного індексу і в процесі інтерполяції
+ * @param x Вузли інтерполяції
+ * @param i Індекс вузла, для якого потрібно обчислити базовий поліном
+ * @return Базовий поліном Лагранжа
+ */
+vector<double> ComputeLagrangeBasis(const vector<double>& x, int i) {
+
+	const int n = x.size();
+	vector<double> basis(n, 0);
+	basis[0] = 1;
+
+	for (int j = 0; j < n; j++) {
+		if (j != i) {
+			for (int k = n - 1; k >= 0; k--) {
+				if (k > 0) basis[k] = basis[k - 1] - x[j] * basis[k];
+				else basis[k] = 0 - x[j] * basis[k];
+			}
+			double dev = x[i] - x[j];
+			for (int k = 0; k < n; k++) {
+				basis[k] /= dev;
+			}
+		}
+	}
+	return basis;
+}
+
+/**
+ * @brief Функція, яка будує многочлен Лагранжа, що наближає таблично задану функцію
+ * @param x Вузли інтерполяції
+ * @param y Значення функції в вузлах інтерполяції
+ * @return Многочлен Лагранжа
+ */
+vector<double> BuildLagrangePolynomial(const vector<double>& x, const vector<double>& y) {
+
+	const int n = x.size();
+	vector<double> polynomial(n, 0);
+
+	for (int i = 0; i < n; i++) {
+		vector<double> basis = ComputeLagrangeBasis(x, i);
+		for (int j = 0; j < n; j++) {
+			polynomial[j] += y[i] * basis[j];
+		}
+	}
+
+	return polynomial;
+}
+
+/**
+ * @brief Функція, яка виводить аналітичний вираз полінома, побудований за допомогою методу Лагранжа
+ * @param polynomial Многочлен Лагранжа
+ */
+void BuiltPolynomial(const vector<double>& polynomial) {
+
+	const int n = polynomial.size();
+	cout << "P(x) = " << ANSI_COLOR_GREEN;
+	for (int i = n - 1; i >= 0; i--) {
+		if (i != n - 1) cout << " + ";
+		if (i == 0 || abs(polynomial[i]) != i) cout << polynomial[i];
+		if (i > 0) cout << "x";
+		if (i > 1) cout << "^" << i;
+	}cout << ANSI_COLOR_RESET << endl;
+}
+
 int main() {
 
 	const int n = 5;
@@ -113,6 +177,7 @@ int main() {
 		LinearInterpolation(Xa, x, y, n);
 		QuadraticInterpolation(Xa, x, y, n);
 		LagrangianInterpolation(Xa, x, y, n);
+		BuiltPolynomial(BuildLagrangePolynomial(x, y));
 	}
 	catch (const char* err) {
 		cerr << ANSI_COLOR_RED << err << ANSI_COLOR_RESET << endl;
