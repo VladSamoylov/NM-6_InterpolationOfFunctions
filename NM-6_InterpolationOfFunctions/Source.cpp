@@ -47,10 +47,10 @@ void QuadraticInterpolation(const double& Xa, const vector<double>& x, const vec
 		if (Xa >= x[i] && Xa <= x[i + 1]) z = i;
 	}
 	if (z + 2 < n) {
-		for (int i = z; i < z + 2; i++) {
+		for (int i = z; i <= z + 2; i++) {
 			double p1 = 1;
 			double p2 = 1;
-			for (int k = z; k < z + 2; k++) {
+			for (int k = z; k <= z + 2; k++) {
 				if (k != i) {
 					p1 *= Xa - x[k];
 					p2 *= x[i] - x[k];
@@ -60,10 +60,10 @@ void QuadraticInterpolation(const double& Xa, const vector<double>& x, const vec
 		}
 	}
 	else {
-		for (int i = z - 1; i < z + 1; i++) {
+		for (int i = z - 1; i <= z + 1; i++) {
 			double p1 = 1;
 			double p2 = 1;
-			for (int k = z - 1; k < z + 1; k++) {
+			for (int k = z - 1; k <= z + 1; k++) {
 				if (k != i) {
 					p1 *= Xa - x[k];
 					p2 *= x[i] - x[k];
@@ -107,7 +107,7 @@ int main() {
 	const int n = 5;
 	vector<double> x = { -2, -1, 0, 1, 2 };
 	vector<double> y = { 9.9, 5.1, 1.9, 1.1, 1.9 };
-	const double Xa = 0.3333;
+	const double Xa = 0.333;
 
 	try {
 		LinearInterpolation(Xa, x, y, n);
